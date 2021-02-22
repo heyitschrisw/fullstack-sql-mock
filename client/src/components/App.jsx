@@ -9,13 +9,60 @@ export default class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-
+      products: [],
+      currentProduct: 0,
+      search: ''
     }
+    this.getProducts = this.getProducts.bind(this);
+    this.handleProductListClick = this.handleProductListClick.bind(this);
+    this.handleSearchInput = this.handleSearchInput.bind(this);
+    this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
+  }
+
+  getProducts() {
+    axios.get('/products')
+    .then(({data}) => {
+      this.setState({products: data});
+    })
+    .catch((err) => {
+      console.error(err);
+    })
+  }
+
+  handleSearchInput(e) {
+    this.setState({search: e.target.value},
+      () => {console.log(this.state.search)})
+  }
+
+  handleSearchSubmit() {
+    // Take search term and filter through list
+    // Pass new index into productViewr
+    // As searchterm continues to match product, render like-product
+
+    let products = this.state.products;
+    let searchTerm = this.state.search.toLowerCase();
+    products.forEach((product, index) => {
+      let item = product.item.toLowerCase();
+      if (item.indexOf(searchTerm) > -1) {
+        console.log('index', index)
+        this.setState({currentProduct: index})
+      }
+    })
 
   }
 
+  handleProductListClick(index) {
+    this.setState({currentProduct: index})
+  }
+
+  componentDidMount() {
+    this.getProducts();
+  }
+
   render(){
-  
+    let products = this.state.products;
+    let currentProduct = this.state.currentProduct;
+
     return(
       <div>
         <div>
@@ -24,15 +71,22 @@ export default class App extends React.Component {
         </div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search />
+            <Search
+              search={this.state.search}
+              handleSearchInput={this.handleSearchInput}
+              handleSearchSubmit={this.handleSearchSubmit}/>
           </div>
         </nav>
         <div className="row main-container">
           <div className="col-md-7 product-viewer-container">
-            <ProductViewer />
+            <ProductViewer
+              product={products[currentProduct]}
+              getProducts={this.getProducts}/>
           </div>
           <div className="col-md-5 product-list-container">
-            <ProductList  />
+            <ProductList
+              products={products}
+              handleProductListClick={this.handleProductListClick} />
           </div>
         </div>
       </div>
