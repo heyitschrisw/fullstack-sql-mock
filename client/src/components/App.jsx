@@ -30,24 +30,28 @@ export default class App extends React.Component {
   }
 
   handleSearchInput(e) {
-    this.setState({search: e.target.value},
-      () => {console.log(this.state.search)})
+    this.setState({search: e.target.value}, () => {
+      this.handleSearchSubmit();
+    })
   }
 
   handleSearchSubmit() {
     // Take search term and filter through list
     // Pass new index into productViewr
     // As searchterm continues to match product, render like-product
-
     let products = this.state.products;
     let searchTerm = this.state.search.toLowerCase();
-    products.forEach((product, index) => {
-      let item = product.item.toLowerCase();
-      if (item.indexOf(searchTerm) > -1) {
-        console.log('index', index)
-        this.setState({currentProduct: index})
-      }
-    })
+    if (searchTerm.length > 0) {
+      products.forEach((product, index) => {
+        let item = product.item.toLowerCase();
+        if (item.indexOf(searchTerm) > -1) {
+          console.log('index', index)
+          this.setState({currentProduct: index})
+        }
+      })
+    } else {
+      this.setState({currentProduct: 0})
+    }
 
   }
 

@@ -18,8 +18,6 @@ export default class ProductViewer extends React.Component {
   handleBidValue(e) {
     this.setState({
       bidValue: e.target.value
-    }, () => {
-      console.log('Bid: ', this.state.bidValue)
     })
   }
 
